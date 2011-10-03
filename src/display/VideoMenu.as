@@ -60,7 +60,7 @@ package  display
 			volumeControl.addEventListener(CustomEvent.ON_CHANGE, defineVolume);
 			
 			try{
-				ExternalInterface.addCallback("play", play);
+				ExternalInterface.addCallback("doPlay", play);
 			}catch (e:*) { 
 				trace("no external interface"); 
 			}
