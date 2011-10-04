@@ -7,6 +7,8 @@ package display
 	import cc.shic.Utils;
 	import com.greensock.TweenMax;
 	import config.Config;
+	import display.pictos.PictoPause;
+	import display.pictos.PictoPlay;
 	import flash.display.Bitmap;
 	import flash.display.BlendMode;
 	import flash.display.Sprite;
@@ -18,15 +20,12 @@ package display
 	 */
 	public class PlayPause extends Sprite 
 	{
-		[Embed(source="/assets/play.png")]
-		public var PlayPicture:Class;
+
 		[Embed(source="/assets/pause.png")]
 		public var PausePicture:Class;
 		
-		//public var pictoPlay:EasyLoader ;
-		public var pictoPlay:Bitmap ;
-		//public var pictoPause:EasyLoader;
-		public var pictoPause:Bitmap;
+		public var pictoPlay:PictoPlay=new PictoPlay() ;
+		public var pictoPause:PictoPause = new PictoPause();
 		//
 		public var background:Square;
 		
@@ -34,10 +33,7 @@ package display
 		
 		public function PlayPause() 
 		{
-			//pictoPlay = new EasyLoader(Utils.flashVarsGet("playBtn", Config.racine + "img/videoPlayer/play.png"));
-			pictoPlay = new PlayPicture();
-			//pictoPause = new EasyLoader(Utils.flashVarsGet("pauseBtn", Config.racine + "img/videoPlayer/pause.png"));
-			pictoPause = new PausePicture();
+
 			
 			addChild(pictoPlay);
 			addChild(pictoPause);

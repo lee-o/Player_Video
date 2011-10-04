@@ -12,7 +12,9 @@ package
 	import cc.shic.Utils;
 	import com.greensock.TweenLite;
 	import config.Css;
+	import display.pictos.PictoPlay128;
 	import display.VideoMenu;
+	import flash.display.BlendMode;
 	import flash.display.Sprite;
 	import flash.display.StageDisplayState;
 	import flash.events.Event;
@@ -50,6 +52,8 @@ package
 		public var autoload:Boolean;
 		private var buildMenu:ContextMenu;
 		private var menuVisible:Boolean = true;
+		private var posterContainer:Sprite;
+		private var posterPlay:PictoPlay128;
 		
 		
 		public function MainVideoPlayer():void 
@@ -79,7 +83,9 @@ package
 			build();
 			
 		}
-		
+		/**
+		 * met à disposion les flash vars
+		 */
 		private function initFlashVars():void
 		{
 			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://lionel.de.shic.cc/player/medias/videos/Lila_cayeux_HD.mp4?"+Math.random()*1000);
@@ -105,7 +111,9 @@ package
 			this.videoCrop  = Utils.getBool(Utils.flashVarsGet("videoCrop", "false"));
 			
 		}
-		
+		/**
+		 * met en place tout le bazar
+		 */
 		private function build():void
 		{
 			
@@ -130,17 +138,26 @@ package
 			resize();
 			
 		}
-		private function onPlayStatus( flag : Boolean ):void {
-			poster.visible = !flag && (video.stream.time == 0);
-			video.visible = !poster.visible;
-			srtField.visible = flag;
-			try{
-				ExternalInterface.call( "VideoPlayer.onPlayStatus" ,  flag  );
+		/**
+		 * invoqué qd le status de lecture change
+		 * @param	playing true si en cours de lecteur, false sinon
+		 */
+		private function onPlayStatus( playing : Boolean ):void {
+			posterContainer.visible = !playing && (video.stream.time == 0);
+			video.visible = !posterContainer.visible;
+			srtField.visible = playing;
+			try {
+				if(ExternalInterface.available){
+					ExternalInterface.call( "VideoPlayer.onPlayStatus" ,  playing  );
+				}
 			}catch ( e : * ) {
 				// not embeddeded
 			}
 		}
-		
+		/**
+		 * Cache le menu...
+		 * @param	e
+		 */
 		private function hideMenu(e:CustomEvent):void 
 		{
 			menuVisible = menu.playPause.paused;
@@ -149,12 +166,21 @@ package
 			}
 			resize();
 		}
+		/**
+		 * Affiche le menu
+		 * @param	e
+		 */
 		private function showMenu(e:CustomEvent):void 
 		{
 			TweenLite.to(menu, 0.3, { autoAlpha:1 } );
 			menuVisible = true;
 			resize();
 		}
+		/**
+		 * Charge une vidéo
+		 * @param	url
+		 * @param	autoLoad
+		 */
 		private function loadVideo(url:String, autoLoad:Boolean = true ):void
 		{
 			if(video){
@@ -186,26 +212,48 @@ package
 			video.addEventListener(CustomEvent.ON_PLAY_COMPLETE, showPoster);
 			video.addEventListener(CustomEvent.ON_META_DATA, onMetaData);
 		}
-		
+		/**
+		 * affiche le poster
+		 * @param	e
+		 */
 		private function showPoster(e:* = null):void 
 		{
-			poster.visible = true;
+			posterContainer.visible = true;
+			
 		}
-		
+		/**
+		 * cache le poster
+		 * @param	e
+		 */
 		private function hidePoster(e:* = null):void 
 		{
-			poster.visible = false;
+			posterContainer.visible = false;
 		}
-		
+		/**
+		 * charge le poster
+		 * @param	url
+		 */
 		private function loadPoster( url :String ):void {
-			poster = new EasyLoader( url , true ,0.5,true,true);
+			posterContainer = new Sprite();
+			//var bigPictoPlay:EasyLoader=new EasyLoader(
+			poster = new EasyLoader( url , true , 0.5, true, true);
 			poster.addEventListener( Event.COMPLETE , function( e:*= null ):void {
 				resize();
 			});
-			poster.visible = autoplay;
-			poster.addEventListener(MouseEvent.CLICK,function clicPoster():void{menu.play(true)});
+			posterContainer.addChild(poster);
+			
+			posterPlay = new PictoPlay128();
+			posterPlay.blendMode = BlendMode.INVERT;
+			posterContainer.addChild(posterPlay);
+			
+			posterContainer.visible = autoplay;
+			posterContainer.buttonMode = true;
+			posterContainer.addEventListener(MouseEvent.CLICK,function clicPoster():void{menu.play(true)});
 		}
-		
+		/**
+		 * invoqué quand les meta de la vidéo sont disponibles, entraine un resize et le chargement des sous titres
+		 * @param	e
+		 */
 		private function onMetaData(e:CustomEvent):void 
 		{
 			resize();
@@ -219,7 +267,10 @@ package
 			}
 			//trace(Utils.requestedFlashVarsGet);
 		}
-		
+		/**
+		 * Quand on toggle hi et low quality
+		 * @param	e
+		 */
 		private function onQualityChange(e:CustomEvent):void 
 		{
 			//trace("video low def? " + e.currentPosition);
@@ -309,7 +360,10 @@ package
 				//
 				poster.y = stage.stageHeight / 2 - poster.height / 2;
 				poster.x = stage.stageWidth / 2 - poster.width / 2;
-				addChild(poster);
+				posterPlay.x = stage.stageWidth / 2 - posterPlay.width / 2;
+				posterPlay.y = stage.stageHeight / 2 - posterPlay.height / 2;
+				addChild(posterContainer);
+
 			}
 			//
 			addChild(menu);
@@ -317,7 +371,7 @@ package
 		}
 		
 		/**
-		 * 
+		 * gère les racourcis clavier utilisateurs
 		 * @param event
 		 * 
 		 */		
@@ -338,7 +392,10 @@ package
 				menu.play(!video.playing);
 			}
 		}
-		
+		/**
+		 * passe en full screen ou l'inverse en fonction du status actuel
+		 * @param	e
+		 */
 		private function toggleFullScreen(e:* = null):void 
 		{
 			if (Utils.stage.displayState == StageDisplayState.FULL_SCREEN) {
