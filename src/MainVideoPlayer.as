@@ -90,7 +90,7 @@ package
 		{
 			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://lionel.de.shic.cc/player/medias/videos/Lila_cayeux_HD.mp4?"+Math.random()*1000);
 			//this.videoUrl = Utils.flashVarsGet("videoUrl", "");
-			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://lionel.de.shic.cc/player/medias/videos/Lila_cayeux_LD.mp4?"+Math.random()*1000);
+			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			//this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://lionel.de.shic.cc/player/medias/photos/_Lila_cayeux.jpg");
 			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
@@ -243,7 +243,7 @@ package
 			posterContainer.addChild(poster);
 			
 			posterPlay = new PictoPlay128();
-			posterPlay.blendMode = BlendMode.INVERT;
+			//posterPlay.blendMode = BlendMode.INVERT;
 			posterContainer.addChild(posterPlay);
 			
 			posterContainer.visible = autoplay;
