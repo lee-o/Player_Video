@@ -39,6 +39,7 @@ package  display
 		private var hd:HdToggle;
 		private var onLoadingComplete:Boolean;
 		private var videoWasPlaying:Boolean;
+		private var timerVisible:Boolean;
 		public var hasHdControler:Boolean;
 		public var onPlayStatus:Function = function( flag : Boolean ) :void {
 			// rien
@@ -48,9 +49,13 @@ package  display
 		{
 			hasHdControler = hasHdControler;
 			
-			timeField = new TexfieldMonoline();
-			Css.textFormatMenu.applyTo(timeField);
-			timeField.text = "00:00 / 00:00";
+			this.timerVisible  = Utils.getBool(Utils.flashVarsGet("timerVisible", "true"));
+			
+			if(timerVisible){
+				timeField = new TexfieldMonoline();
+				Css.textFormatMenu.applyTo(timeField);
+				timeField.text = "00:00 / 00:00";
+			}
 			
 			fs = new FullScreenButton();
 			
@@ -70,7 +75,7 @@ package  display
 			addChild(progressLoading);
 			addChild(progress);
 			addChild(progressBt);
-			addChild(timeField);
+			if(timerVisible) addChild(timeField);
 			addChild(fs);
 			addChild(volumeControl);
 			addChild(playPause);
@@ -178,7 +183,7 @@ package  display
 		
 		private function onProgress(e:CustomEvent):void 
 		{
-			timeField.text = UtilsTime.secondsToHumanMinutes(_video.time) + " / " + UtilsTime.secondsToHumanMinutes(_video.duration);
+			if(timerVisible) timeField.text = UtilsTime.secondsToHumanMinutes(_video.time) + " / " + UtilsTime.secondsToHumanMinutes(_video.duration);
 			progress.width=Utils.rapport(e.currentPosition, e.maxPosition, _width, 0, 0);
 		}
 		
@@ -190,11 +195,11 @@ package  display
 				progressLoading.width = _width;
 			}
 			progressBg.width = _width;
-			timeField.y = _height / 2 - timeField.height / 2;
+			if(timerVisible) timeField.y = _height / 2 - timeField.height / 2;
 			playPause.y = _height / 2 - playPause.height / 2;
 			fs.y = Math.floor(_height / 2 - fs.height / 2);
 			playPause.x = m;
-			timeField.x = playPause.x + playPause.width + m;
+			if(timerVisible) timeField.x = playPause.x + playPause.width + m;
 			volumeControl.y = _height / 2 - volumeControl.height / 2;
 			
 			

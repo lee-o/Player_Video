@@ -88,12 +88,12 @@ package
 		 */
 		private function initFlashVars():void
 		{
-			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://lionel.de.shic.cc/player/medias/videos/Lila_cayeux_HD.mp4?"+Math.random()*1000);
-			//this.videoUrl = Utils.flashVarsGet("videoUrl", "");
+			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://lionel.de.shic.cc/player/medias/videos/Lila_cayeux_HD.mp4?"+Math.random()*1000);
+			this.videoUrl = Utils.flashVarsGet("videoUrl", "");
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			//this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
-			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://lionel.de.shic.cc/player/medias/photos/_Lila_cayeux.jpg");
-			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
+			//this.posterUrl = Utils.flashVarsGet("posterUrl", "http://lionel.de.shic.cc/player/medias/photos/_Lila_cayeux.jpg");
+			this.posterUrl = Utils.flashVarsGet("posterUrl", "");
 			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
 			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://www.piaget.ae/xml/subtitles/srt2usf?file=media/vitrine2_VA_AR-11.srt");
 			this.srtUrl=Utils.flashVarsGet("srtUrl", "");
@@ -108,8 +108,7 @@ package
 			//true || false : Si true la vidéo est étirée pour matcher les dimenssions du cadre
 			this.videoScaling  = Utils.getBool(Utils.flashVarsGet("videoScaling", "true"));
 			//true || false : Si false la totalité de la vidéo est affichée, bordure noire si le cadre est plus grand
-			this.videoCrop  = Utils.getBool(Utils.flashVarsGet("videoCrop", "false"));
-			
+			this.videoCrop  = Utils.getBool(Utils.flashVarsGet("videoCrop", "false"));			
 		}
 		/**
 		 * met en place tout le bazar
