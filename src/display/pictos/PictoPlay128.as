@@ -10,7 +10,8 @@ package display.pictos
 	public class PictoPlay128 extends Sprite
 	{
 
-		[Embed(source="/assets/play128.png")]
+		//[Embed(source="/assets/play128.png")]
+		[Embed(source="/assets/play128_v2.png")]
 		public var PictoPlayClass:Class;
 		
 		public function PictoPlay128() 

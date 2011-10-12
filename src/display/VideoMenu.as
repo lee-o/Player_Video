@@ -111,7 +111,9 @@ package  display
 			}
 		}
 		
-		public function get video():EasyVideo { return _video; }
+		public function get video():EasyVideo { 
+			return _video;
+		}
 		
 		public function set video(value:EasyVideo):void 
 		{
@@ -183,8 +185,14 @@ package  display
 		
 		private function onProgress(e:CustomEvent):void 
 		{
-			if(timerVisible) timeField.text = UtilsTime.secondsToHumanMinutes(_video.time) + " / " + UtilsTime.secondsToHumanMinutes(_video.duration);
-			progress.width=Utils.rapport(e.currentPosition, e.maxPosition, _width, 0, 0);
+			if (timerVisible) {
+				if(_video.duration > 3600){
+					timeField.text = UtilsTime.secondsToHMS(_video.time) + " / " + UtilsTime.secondsToHMS(_video.duration);
+				}else {
+					timeField.text = UtilsTime.secondsToHumanMinutes(_video.time) + " / " + UtilsTime.secondsToHumanMinutes(_video.duration);
+				}	
+			}
+			progress.width = Utils.rapport(e.currentPosition, e.maxPosition, _width, 0, 0);
 		}
 		
 		public override function resize():void {

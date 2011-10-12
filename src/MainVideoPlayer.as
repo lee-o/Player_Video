@@ -88,19 +88,20 @@ package
 		 */
 		private function initFlashVars():void
 		{
-			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://lionel.de.shic.cc/player/medias/videos/Lila_cayeux_HD.mp4?"+Math.random()*1000);
-			this.videoUrl = Utils.flashVarsGet("videoUrl", "");
+			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/The_Art_of_Flight.mp4?"+Math.random()*1000);
+			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/gophMountain.mp4?"+Math.random()*1000);
+			//this.videoUrl = Utils.flashVarsGet("videoUrl", "");
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			//this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
-			//this.posterUrl = Utils.flashVarsGet("posterUrl", "http://lionel.de.shic.cc/player/medias/photos/_Lila_cayeux.jpg");
-			this.posterUrl = Utils.flashVarsGet("posterUrl", "");
+			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/ppw2012/medias/videos/aof.jpg");
+			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
 			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
 			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://www.piaget.ae/xml/subtitles/srt2usf?file=media/vitrine2_VA_AR-11.srt");
 			this.srtUrl=Utils.flashVarsGet("srtUrl", "");
 			this.loop = Utils.getBool(Utils.flashVarsGet("loop", "false"));
 			this.autoplay = Utils.getBool(Utils.flashVarsGet("autoplay", "false"));
 			//Lancement netstream au debut ou pas --> non fonctionnel
-			//this.autoload = Utils.getBool(Utils.flashVarsGet("autoload", "false"));
+			this.autoload = Utils.getBool(Utils.flashVarsGet("autoload", "true"));
 			//true || false : Si true le poster est étirée pour matcher les dimenssions du cadre
 			this.posterScaling  = Utils.getBool(Utils.flashVarsGet("posterScaling", "true"));
 			//true || false : Si false la totalité du poster est affiché, bordure noire si le cadre est plus grand
