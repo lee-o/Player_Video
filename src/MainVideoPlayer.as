@@ -88,8 +88,8 @@ package
 		 */
 		private function initFlashVars():void
 		{
-			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/The_Art_of_Flight.mp4?"+Math.random()*1000);
-			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/gophMountain.mp4?"+Math.random()*1000);
+			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/The_Art_of_Flight.mp4?"+Math.random()*1000);
+			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/gophMountain.mp4?"+Math.random()*1000);
 			//this.videoUrl = Utils.flashVarsGet("videoUrl", "");
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			//this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
@@ -132,8 +132,8 @@ package
 			srtField.filters = [Css.subtitlesShadow];
 
 			loadPoster(posterUrl);
-			//loadVideo(videoUrl,autoload);
-			loadVideo(videoUrl);
+			loadVideo(videoUrl,autoload);
+			//loadVideo(videoUrl);
 			
 			resize();
 			
@@ -143,7 +143,15 @@ package
 		 * @param	playing true si en cours de lecteur, false sinon
 		 */
 		private function onPlayStatus( playing : Boolean ):void {
-			posterContainer.visible = !playing && (video.stream.time == 0);
+			var videoTime:Number;
+			if (video.stream) {
+				trace("video stream existe");
+				videoTime = video.stream.time;
+			}else {
+				trace("video stream n'existe pas");
+				videoTime = 0;
+			}
+			posterContainer.visible = !playing && (videoTime == 0);
 			video.visible = !posterContainer.visible;
 			srtField.visible = playing;
 			try {
@@ -190,14 +198,12 @@ package
 				video = null;
 			}
 			video = new EasyVideo(url, !autoplay, loop,autoLoad);
-			//autoplay = true;
 			video.addEventListener( CustomEvent.ON_PLAY_COMPLETE , function():void {
 				video.time = 0;
 				menu.play( loop );
 			});
 			video.addEventListener(MouseEvent.CLICK,function clicVideo():void{menu.play(!video.playing);});
 			
-			//autoplay = true; // au deuxielme lancement video ce sera toujours autoplay
 			menu.video = video;
 			menu.visible = true;
 			menu.play( autoplay );
@@ -235,7 +241,6 @@ package
 		 */
 		private function loadPoster( url :String ):void {
 			posterContainer = new Sprite();
-			//var bigPictoPlay:EasyLoader=new EasyLoader(
 			poster = new EasyLoader( url , true , 0.5, true, true);
 			poster.addEventListener( Event.COMPLETE , function( e:*= null ):void {
 				resize();
@@ -243,7 +248,6 @@ package
 			posterContainer.addChild(poster);
 			
 			posterPlay = new PictoPlay128();
-			//posterPlay.blendMode = BlendMode.INVERT;
 			posterContainer.addChild(posterPlay);
 			
 			posterContainer.visible = autoplay;
@@ -273,12 +277,10 @@ package
 		 */
 		private function onQualityChange(e:CustomEvent):void 
 		{
-			//trace("video low def? " + e.currentPosition);
 			autoplay = video.playing;
 			if (e.currentPosition == 0) {
 				loadVideo(videoLowDefUrl);
 			}else {
-				//trace("hi def video");
 				loadVideo(videoUrl);
 			}
 			if (video.playing) menu.play(true); 

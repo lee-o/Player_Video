@@ -134,8 +134,6 @@ package  display
 			Utils.stage.removeEventListener(MouseEvent.MOUSE_MOVE, loopDrag);
 			Utils.stage.removeEventListener(MouseEvent.MOUSE_UP, stopdrag);
 			loopDrag();
-			//_video.play();
-			//playPause.paused = false;
 			play(videoWasPlaying);
 			
 		}
