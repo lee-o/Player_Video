@@ -149,7 +149,7 @@ package  display
 		
 		private function loopDrag(e:*=null):void 
 		{
-			_video.time = Utils.rapport(Math.min(mouseX, progressLoading.width), _width, video.duration, 0, 0);
+			_video.time = Utils.rapport(Math.min(Math.max(0,mouseX), progressLoading.width), _width, video.duration, 0, 0);
 			_video.stop();
 		}
 		

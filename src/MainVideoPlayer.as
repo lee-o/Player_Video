@@ -88,20 +88,24 @@ package
 		 */
 		private function initFlashVars():void
 		{
-			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/The_Art_of_Flight.mp4?"+Math.random()*1000);
-			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/gophMountain.mp4?"+Math.random()*1000);
-			//this.videoUrl = Utils.flashVarsGet("videoUrl", "");
-			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
-			//this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
+			//LOCALE
+			/*//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/The_Art_of_Flight.mp4?"+Math.random()*1000);
+			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/gophMountain.mp4?"+Math.random()*1000);
+			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://pacome-et-lila.fr/medias/videos/Lila_cayeux_HD.mp4?"+Math.random()*1000);
+			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://pacome-et-lila.fr/medias/videos/Lila_cayeux_LD.mp4");
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/ppw2012/medias/videos/aof.jpg");
-			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
 			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
-			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://www.piaget.ae/xml/subtitles/srt2usf?file=media/vitrine2_VA_AR-11.srt");
-			this.srtUrl=Utils.flashVarsGet("srtUrl", "");
+			this.srtUrl=Utils.flashVarsGet("srtUrl", "http://www.piaget.ae/xml/subtitles/srt2usf?file=media/vitrine2_VA_AR-11.srt");*/
+			//EN LIGNE
+			this.videoUrl = Utils.flashVarsGet("videoUrl", "");
+			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
+			this.posterUrl = Utils.flashVarsGet("posterUrl", "");
+			this.srtUrl = Utils.flashVarsGet("srtUrl", "");
+			//PARAMS
 			this.loop = Utils.getBool(Utils.flashVarsGet("loop", "false"));
 			this.autoplay = Utils.getBool(Utils.flashVarsGet("autoplay", "false"));
-			//Lancement netstream au debut ou pas --> non fonctionnel
-			this.autoload = Utils.getBool(Utils.flashVarsGet("autoload", "true"));
+			//Lancement netstream au debut ou pas 
+			this.autoload = Utils.getBool(Utils.flashVarsGet("autoload", "false"));
 			//true || false : Si true le poster est étirée pour matcher les dimenssions du cadre
 			this.posterScaling  = Utils.getBool(Utils.flashVarsGet("posterScaling", "true"));
 			//true || false : Si false la totalité du poster est affiché, bordure noire si le cadre est plus grand
@@ -116,27 +120,37 @@ package
 		 */
 		private function build():void
 		{
+			//on verifie que autoload est bien sur true au cas ou autoplay est true
+			if (autoplay) autoload = true;
 			
 			mouseTimer = new MouseTimer(5000, Utils.stage);
 			mouseTimer.addEventListener(CustomEvent.ON_SLEEPING, hideMenu);
 			mouseTimer.addEventListener(CustomEvent.ON_MOVING, showMenu);
 			
+			loadPoster(posterUrl);
+			
+			if (autoload) {
+				createMenu();
+				createSrt();
+				loadVideo(videoUrl, autoload);
+			}
+			
+		}
+		
+		private function createSrt():void 
+		{
+			srtField.text = " ";
+			Css.textFormatSubtitles.applyTo(srtField);
+			srtField.filters = [Css.subtitlesShadow];
+		}
+		
+		private function createMenu():void 
+		{
 			menu = new VideoMenu(Utils.getBool(this.videoLowDefUrl));
 			menu.visible = false;
 			menu.addEventListener(CustomEvent.ON_QUALITY_CHANGE, onQualityChange);
 			menu.height = Css.menuHeight;
 			menu.onPlayStatus = onPlayStatus;
-			
-			srtField.text = " ";
-			Css.textFormatSubtitles.applyTo(srtField);
-			srtField.filters = [Css.subtitlesShadow];
-
-			loadPoster(posterUrl);
-			loadVideo(videoUrl,autoload);
-			//loadVideo(videoUrl);
-			
-			resize();
-			
 		}
 		/**
 		 * invoqué qd le status de lecture change
@@ -144,15 +158,17 @@ package
 		 */
 		private function onPlayStatus( playing : Boolean ):void {
 			var videoTime:Number;
-			if (video.stream) {
-				trace("video stream existe");
-				videoTime = video.stream.time;
+			video.stream ? videoTime = video.stream.time : videoTime = 0;
+			var currentPostContVisible:Boolean = posterContainer.visible;
+			var nextPostContVisible:Boolean = !playing && (videoTime == 0);
+			if (currentPostContVisible && (nextPostContVisible == false)) {
+				TweenLite.to(posterContainer, 0.3, { autoAlpha:0 } );
 			}else {
-				trace("video stream n'existe pas");
-				videoTime = 0;
+				posterContainer.visible = nextPostContVisible;
+				posterContainer.alpha = 1;
 			}
-			posterContainer.visible = !playing && (videoTime == 0);
-			video.visible = !posterContainer.visible;
+			//video.visible = !posterContainer.visible;
+			video.visible = !nextPostContVisible;
 			srtField.visible = playing;
 			try {
 				if(ExternalInterface.available){
@@ -168,11 +184,13 @@ package
 		 */
 		private function hideMenu(e:CustomEvent):void 
 		{
-			menuVisible = menu.playPause.paused;
-			if (Utils.getNumber(menu.playPause.paused) == 0) {
-				TweenLite.to(menu, 0.3, { autoAlpha:0 } );
+			if(menu){
+				menuVisible = menu.playPause.paused;
+				if (Utils.getNumber(menu.playPause.paused) == 0) {
+					TweenLite.to(menu, 0.3, { autoAlpha:0 } );
+				}
+				resize();
 			}
-			resize();
 		}
 		/**
 		 * Affiche le menu
@@ -180,9 +198,11 @@ package
 		 */
 		private function showMenu(e:CustomEvent):void 
 		{
-			TweenLite.to(menu, 0.3, { autoAlpha:1 } );
-			menuVisible = true;
-			resize();
+			if(menu){
+				TweenLite.to(menu, 0.3, { autoAlpha:1 } );
+				menuVisible = true;
+				resize();
+			}
 		}
 		/**
 		 * Charge une vidéo
@@ -246,13 +266,26 @@ package
 				resize();
 			});
 			posterContainer.addChild(poster);
-			
+			//
 			posterPlay = new PictoPlay128();
 			posterContainer.addChild(posterPlay);
-			
-			posterContainer.visible = autoplay;
+			//
+			autoload ? posterContainer.visible = autoplay : posterContainer.visible = true;
 			posterContainer.buttonMode = true;
-			posterContainer.addEventListener(MouseEvent.CLICK,function clicPoster():void{menu.play(true)});
+			posterContainer.addEventListener(MouseEvent.CLICK,clicPoster);
+		}
+		//
+		private function clicPoster(e:MouseEvent = null):void
+		{
+			if (autoload){
+				menu.play(true);
+			}else {
+				autoload = true;
+				createMenu();
+				createSrt();
+				loadVideo(videoUrl, autoload);
+				menu.play(true);
+			}
 		}
 		/**
 		 * invoqué quand les meta de la vidéo sont disponibles, entraine un resize et le chargement des sous titres
@@ -261,7 +294,7 @@ package
 		private function onMetaData(e:CustomEvent):void 
 		{
 			resize();
-			trace(Utils.requestedFlashVarsGet)
+			//trace(Utils.requestedFlashVarsGet)
 			if (srtUrl) {
 				var subtitles:Subtitles = new Subtitles();
 				subtitles.load(srtUrl);
@@ -290,7 +323,11 @@ package
 
 		private function setPositionSrt(e:*= null):void {
 			srtField.width = stage.stageWidth * 0.75;
-			menuVisible ? srtField.y = menu.y - srtField.height - 30 : srtField.y = stage.stageHeight - srtField.height - 30;
+			if(menu){
+				menuVisible ? srtField.y = menu.y - srtField.height - 30 : srtField.y = stage.stageHeight - srtField.height - 30;
+			}else {
+				srtField.y = stage.stageHeight - srtField.height - 30;
+			}
 			srtField.x = stage.stageWidth / 2 - srtField.width / 2;
 		}
 		
@@ -298,9 +335,10 @@ package
 		
 		private function resize(e:*=null):void 
 		{
-			menu.width = stage.stageWidth;
-			//
-			menu.y = stage.stageHeight - menu.height;
+			if(menu){
+				menu.width = stage.stageWidth;
+				menu.y = stage.stageHeight - menu.height;
+			}
 			//
 			if (video) {
 				var maxWidthVideo:Number;
@@ -368,8 +406,8 @@ package
 
 			}
 			//
-			addChild(menu);
-			setPositionSrt();
+			if(menu) addChild(menu);
+			if(srtField) setPositionSrt();
 		}
 		
 		/**
