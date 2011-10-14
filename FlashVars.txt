@@ -1,15 +1,16 @@
-videoUrl
-videoLowDefUrl
-posterUrl
-srtUrl
-loop
-autoplay
-posterScaling
-posterCrop
-videoScaling
-videoCrop
-HdOn
-HdOff
+videoUrl (url video hd ou unique)
+videoLowDefUrl (url video low def)
+posterUrl (url image d'accueil)
+srtUrl (url sous titres)
+loop (true || false)
+autoplay (true || false)
+autoload (true || false)
+posterScaling (true || false)
+posterCrop (true || false)
+videoScaling (true || false)
+videoCrop (true || false)
+HdOn (traduction)
+HdOff (traduction)
 //
 //CSS
 //
