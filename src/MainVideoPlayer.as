@@ -91,16 +91,16 @@ package
 			//LOCALE
 			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/The_Art_of_Flight.mp4?"+Math.random()*1000);
 			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/gophMountain.mp4?"+Math.random()*1000);
-			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/twelve.mp4?"+Math.random()*1000);
-			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/ppw2012/medias/videos/twelve.mp4");
-			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/ppw2012/medias/videos/twelve.jpg");
+			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "http://pacome-et-lila.fr/medias/videos/Lila_cayeux_HD.mp4");
+			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://pacome-et-lila.fr/medias/videos/Lila_cayeux_LD.mp4");
+			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://pacome-et-lila.fr/medias/photos/Lila_cayeux.jpg");
 			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
-			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://www.piaget.ae/xml/subtitles/srt2usf?file=media/vitrine2_VA_AR-11.srt");
+			this.srtUrl=Utils.flashVarsGet("srtUrl", "http://www.piaget.ae/xml/subtitles/srt2usf?file=media/vitrine2_VA_AR-11.srt");*/
 			//EN LIGNE
-			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "");
+			this.videoUrl = Utils.flashVarsGet("videoUrl", "");
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "");
-			this.srtUrl = Utils.flashVarsGet("srtUrl", "");*/
+			this.srtUrl = Utils.flashVarsGet("srtUrl", "");
 			//PARAMS
 			this.loop = Utils.getBool(Utils.flashVarsGet("loop", "false"));
 			this.autoplay = Utils.getBool(Utils.flashVarsGet("autoplay", "false"));
@@ -310,6 +310,9 @@ package
 		 */
 		private function onQualityChange(e:CustomEvent):void 
 		{
+			//if (srtField) {
+				//srtField.text = " ";
+			//}
 			autoplay = video.playing;
 			if (e.currentPosition == 0) {
 				loadVideo(videoLowDefUrl);
