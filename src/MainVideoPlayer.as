@@ -34,7 +34,8 @@ package
 		public var videoUrl:String;
 		public var videoLowDefUrl:String;
 		public var posterUrl:String;
-		public var poster:EasyLoader;
+		//public var poster:EasyLoader;
+		public var poster:*;
 		public var srtUrl:String;
 		public var autoplay:Boolean = false;
 		public var posterScaling:Boolean;
@@ -89,13 +90,11 @@ package
 		private function initFlashVars():void
 		{
 			//LOCALE
-			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/The_Art_of_Flight.mp4?"+Math.random()*1000);
-			//this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/ppw2012/medias/videos/gophMountain.mp4?"+Math.random()*1000);
-			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "http://pacome-et-lila.fr/medias/videos/Lila_cayeux_HD.mp4");
-			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://pacome-et-lila.fr/medias/videos/Lila_cayeux_LD.mp4");
-			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://pacome-et-lila.fr/medias/photos/Lila_cayeux.jpg");
-			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
-			this.srtUrl=Utils.flashVarsGet("srtUrl", "http://www.piaget.ae/xml/subtitles/srt2usf?file=media/vitrine2_VA_AR-11.srt");*/
+			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_HD.mp4");
+			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_LD.mp4");
+			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/photo/medias/photos/Lila_cayeux.jpg");
+			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
+			this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");*/
 			//EN LIGNE
 			this.videoUrl = Utils.flashVarsGet("videoUrl", "");
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
@@ -261,18 +260,29 @@ package
 		 */
 		private function loadPoster( url :String ):void {
 			posterContainer = new Sprite();
-			poster = new EasyLoader( url , true , 0.5, true, true);
-			poster.addEventListener( Event.COMPLETE , function( e:*= null ):void {
-				resize();
-			});
-			posterContainer.addChild(poster);
-			//
 			posterPlay = new PictoPlay128();
-			posterContainer.addChild(posterPlay);
+			//
+			if(url == ""){
+				poster = new SquareShape(100, 100, 0x000000, 1);
+				trace("url == ''");
+				resize();
+				posterContainer.addChild(poster);
+				posterContainer.addChild(posterPlay);
+			}else {
+				poster = new EasyLoader( url , true , 0.5, true, true);
+				poster.addEventListener( Event.COMPLETE , function( e:*= null ):void {
+					resize();
+				});
+				posterContainer.addChild(poster);
+				posterContainer.addChild(posterPlay);
+				trace("url != ''");
+			}
+			
+			//resize();
 			//
 			autoload ? posterContainer.visible = autoplay : posterContainer.visible = true;
 			posterContainer.buttonMode = true;
-			posterContainer.addEventListener(MouseEvent.CLICK,clicPoster);
+			posterContainer.addEventListener(MouseEvent.CLICK, clicPoster);
 		}
 		//
 		private function clicPoster(e:MouseEvent = null):void
