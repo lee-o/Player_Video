@@ -81,7 +81,6 @@ package
 			contextMenu = buildMenu;
 			//
 			initFlashVars();
-			build();
 			
 		}
 		/**
@@ -89,17 +88,17 @@ package
 		 */
 		private function initFlashVars():void
 		{
-			//LOCALE
-			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_HD.mp4");
-			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_LD.mp4");
-			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/photo/medias/photos/Lila_cayeux.jpg");
-			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
-			this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");*/
 			//EN LIGNE
 			this.videoUrl = Utils.flashVarsGet("videoUrl", "");
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "");
 			this.srtUrl = Utils.flashVarsGet("srtUrl", "");
+			//LOCALE
+			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_HD.mp4");
+			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_LD.mp4");
+			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/photo/medias/photos/Lila_cayeux.jpg");
+			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
+			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
 			//PARAMS
 			this.loop = Utils.getBool(Utils.flashVarsGet("loop", "false"));
 			this.autoplay = Utils.getBool(Utils.flashVarsGet("autoplay", "false"));
@@ -112,8 +111,11 @@ package
 			//true || false : Si true la vidéo est étirée pour matcher les dimenssions du cadre
 			this.videoScaling  = Utils.getBool(Utils.flashVarsGet("videoScaling", "true"));
 			//true || false : Si false la totalité de la vidéo est affichée, bordure noire si le cadre est plus grand
-			this.videoCrop  = Utils.getBool(Utils.flashVarsGet("videoCrop", "false"));			
+			this.videoCrop  = Utils.getBool(Utils.flashVarsGet("videoCrop", "false"));	
+			//
+			build();
 		}
+		
 		/**
 		 * met en place tout le bazar
 		 */
@@ -122,7 +124,7 @@ package
 			//on verifie que autoload est bien sur true au cas ou autoplay est true
 			if (autoplay) autoload = true;
 			
-			mouseTimer = new MouseTimer(5000, Utils.stage);
+			mouseTimer = new MouseTimer(3000, Utils.stage);
 			mouseTimer.addEventListener(CustomEvent.ON_SLEEPING, hideMenu);
 			mouseTimer.addEventListener(CustomEvent.ON_MOVING, showMenu);
 			

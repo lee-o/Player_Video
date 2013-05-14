@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Player Vidéo</title>
+		<script type="text/javascript" src="js/swfobject.js"></script>
+		<script type="text/javascript">
+			var flashvars = {
+				racine : "",
+				langcode : "",
+				videoUrl : "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_HD.mp4",
+				videoLowDefUrl : "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_LD.mp4",
+				posterUrl : "http://thinkadelik.fr/photo/medias/photos/Lila_cayeux.jpg",
+				timerFontColor:"00ff00",
+				menuBgColor:"ff0000",
+				progressBgColor:"333333",
+				volumeBackgroundColor:"999999",
+				progressLoadingColor:"ffffff",
+				volumeProgressColor:"ffffff",
+				progressColor:"ffffff",
+				HdOn:"HD",
+				HdOff:"LD",
+				loop:"true"
+			};
+			var params = {
+				menu: "false",
+				scale: "noScale",
+				salign: "tl",
+				allowFullscreen: "true",
+				allowScriptAccess: "always",
+				bgcolor: "#000000",
+				wmode: "window"
+			};
+			var attributes = {id:"flashMovie", name:"testObject"};
+			swfobject.embedSWF("swf/videoPlayer.swf", "flashMovie", "100%", "100%", "10.0.45","js/expressInstall.swf", flashvars, params, attributes);
+		</script>
+		<style>
+			body{
+				background-color:#000;
+				margin:0;
+				pading:0;
+			}
+			#main{
+				width:768px;
+				height:432px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main">
+			<div id="flashMovie"></div>
+		</div>
+	</body>
+</html>
