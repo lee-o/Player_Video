@@ -23,6 +23,7 @@ package
 	import flash.external.ExternalInterface;
 	import flash.ui.ContextMenu;
 	import flash.ui.Keyboard;
+	import flash.utils.setTimeout;
 	
 	/**
 	 * ...
@@ -271,10 +272,9 @@ package
 				posterContainer.addChild(poster);
 				posterContainer.addChild(posterPlay);
 			}else {
-				poster = new EasyLoader( url , true , 0.5, true, true);
-				poster.addEventListener( Event.COMPLETE , function( e:*= null ):void {
-					resize();
-				});
+				poster = new EasyLoader( url , false , 0.5, false, true);
+				poster.alpha = 0;
+				poster.addEventListener( Event.COMPLETE , posterLoaded );
 				posterContainer.addChild(poster);
 				posterContainer.addChild(posterPlay);
 				trace("url != ''");
@@ -285,6 +285,18 @@ package
 			autoload ? posterContainer.visible = autoplay : posterContainer.visible = true;
 			posterContainer.buttonMode = true;
 			posterContainer.addEventListener(MouseEvent.CLICK, clicPoster);
+		}
+		
+		private function posterLoaded(e:Event):void 
+		{
+			var intervalTimeOut:int = setTimeout(launchPoster, 100);
+			
+		}
+		
+		private function launchPoster():void 
+		{
+			resize();
+			TweenLite.to(poster, 0.5, { alpha:1 } );
 		}
 		//
 		private function clicPoster(e:MouseEvent = null):void
