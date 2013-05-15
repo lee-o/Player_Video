@@ -10,17 +10,21 @@ package
 	import cc.shic.ShicConfig;
 	import cc.shic.StageUtils;
 	import cc.shic.Utils;
-	import com.greensock.TweenLite;
+	import com.greensock.TweenMax;
 	import config.Css;
 	import display.pictos.PictoPlay128;
 	import display.VideoMenu;
+	import flash.display.Bitmap;
 	import flash.display.BlendMode;
+	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.events.ProgressEvent;
 	import flash.external.ExternalInterface;
+	import flash.net.URLRequest;
 	import flash.ui.ContextMenu;
 	import flash.ui.Keyboard;
 	import flash.utils.setTimeout;
@@ -56,6 +60,8 @@ package
 		private var menuVisible:Boolean = true;
 		private var posterContainer:Sprite;
 		private var posterPlay:PictoPlay128;
+		private var conteneurImage:Loader;
+		private var conteneurImageRequest:URLRequest;
 		
 		
 		public function MainVideoPlayer():void 
@@ -95,11 +101,11 @@ package
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "");
 			this.srtUrl = Utils.flashVarsGet("srtUrl", "");
 			//LOCALE
-			this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_HD.mp4");
+			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_HD.mp4");
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_LD.mp4");
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/photo/medias/photos/Lila_cayeux.jpg");
 			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
-			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
+			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");*/
 			//PARAMS
 			this.loop = Utils.getBool(Utils.flashVarsGet("loop", "false"));
 			this.autoplay = Utils.getBool(Utils.flashVarsGet("autoplay", "false"));
@@ -129,13 +135,16 @@ package
 			mouseTimer.addEventListener(CustomEvent.ON_SLEEPING, hideMenu);
 			mouseTimer.addEventListener(CustomEvent.ON_MOVING, showMenu);
 			
-			loadPoster(posterUrl);
 			
-			if (autoload) {
-				createMenu();
-				createSrt();
-				loadVideo(videoUrl, autoload);
+			posterContainer = new Sprite();
+			posterPlay = new PictoPlay128();
+			if (posterUrl != "") {
+				loadPoster(posterUrl);
+			}else{
+				createEmptyPoster();
 			}
+			
+			
 			
 		}
 		
@@ -159,12 +168,13 @@ package
 		 * @param	playing true si en cours de lecteur, false sinon
 		 */
 		private function onPlayStatus( playing : Boolean ):void {
+			trace("onPlayStatus")
 			var videoTime:Number;
 			video.stream ? videoTime = video.stream.time : videoTime = 0;
 			var currentPostContVisible:Boolean = posterContainer.visible;
 			var nextPostContVisible:Boolean = !playing && (videoTime == 0);
 			if (currentPostContVisible && (nextPostContVisible == false)) {
-				TweenLite.to(posterContainer, 0.3, { autoAlpha:0 } );
+				TweenMax.to(posterContainer, 0.3, { autoAlpha:0 } );
 			}else {
 				posterContainer.visible = nextPostContVisible;
 				posterContainer.alpha = 1;
@@ -189,7 +199,7 @@ package
 			if(menu){
 				menuVisible = menu.playPause.paused;
 				if (Utils.getNumber(menu.playPause.paused) == 0) {
-					TweenLite.to(menu, 0.3, { autoAlpha:0 } );
+					TweenMax.to(menu, 0.3, { autoAlpha:0 } );
 				}
 				resize();
 			}
@@ -201,7 +211,7 @@ package
 		private function showMenu(e:CustomEvent):void 
 		{
 			if(menu){
-				TweenLite.to(menu, 0.3, { autoAlpha:1 } );
+				TweenMax.to(menu, 0.3, { autoAlpha:1 } );
 				menuVisible = true;
 				resize();
 			}
@@ -224,12 +234,11 @@ package
 				video.time = 0;
 				menu.play( loop );
 			});
-			video.addEventListener(MouseEvent.CLICK,function clicVideo():void{menu.play(!video.playing);});
-			
+			video.addEventListener(MouseEvent.CLICK, function clicVideo():void {menu.play(!video.playing);});
+			//
 			menu.video = video;
 			menu.visible = true;
 			menu.play( autoplay );
-			
 			//
 			addChild(video);
 			//
@@ -247,7 +256,6 @@ package
 		private function showPoster(e:* = null):void 
 		{
 			posterContainer.visible = true;
-			
 		}
 		/**
 		 * cache le poster
@@ -258,45 +266,70 @@ package
 			posterContainer.visible = false;
 		}
 		/**
+		 * cree le poster avec un fond noir
+		 * @param	url
+		 */
+		private function createEmptyPoster():void {
+			trace("createEmptyPoster");
+			poster = new SquareShape(100, 100, 0x000000, 1);
+			posterContainer.addChild(poster);
+			posterContainer.addChild(posterPlay);
+			posterLoaded();
+		}
+		/**
 		 * charge le poster
 		 * @param	url
 		 */
 		private function loadPoster( url :String ):void {
-			posterContainer = new Sprite();
-			posterPlay = new PictoPlay128();
-			//
-			if(url == ""){
-				poster = new SquareShape(100, 100, 0x000000, 1);
-				trace("url == ''");
-				resize();
-				posterContainer.addChild(poster);
-				posterContainer.addChild(posterPlay);
-			}else {
-				poster = new EasyLoader( url , false , 0.5, false, true);
-				poster.alpha = 0;
-				poster.addEventListener( Event.COMPLETE , posterLoaded );
-				posterContainer.addChild(poster);
-				posterContainer.addChild(posterPlay);
-				trace("url != ''");
-			}
+			trace("loadPoster");
+			/*poster = new EasyLoader( url , false , 0.5, true, true);
+			posterContainer.visible = false;
+			posterContainer.alpha = 0;
+			posterContainer.addChild(poster);
+			posterContainer.addChild(posterPlay);
+			poster.addEventListener( Event.COMPLETE , posterLoaded );*/
 			
-			//resize();
+			poster = new Sprite();
+			poster.alpha = 0;
+			posterContainer.addChild(poster);
+			posterContainer.addChild(posterPlay);
+			//
+			conteneurImage = new Loader();
+			conteneurImageRequest = new URLRequest(url);
+			
+			//function onProgress(e:ProgressEvent):void
+			//{
+			//    var p:Number=(e.bytesLoaded*100)/e.bytesTotal;
+			//    trace(p);
+			//}
+			//conteneurImage.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress);
+			conteneurImage.contentLoaderInfo.addEventListener(Event.COMPLETE, posterImgLoaded);
+			conteneurImage.load(conteneurImageRequest);
+		}
+		
+		private function posterImgLoaded(e:Event):void
+		{
+			var image:Bitmap = Bitmap(conteneurImage.content);
+			image.smoothing = true;
+			poster.addChild(image);
+			posterLoaded();
+		}
+			
+		private function posterLoaded(e:Event = null):void 
+		{
+			trace("poster loaded");
+			resize();
+			TweenMax.to(poster, 0.5, { autoAlpha:1 } );
 			//
 			autoload ? posterContainer.visible = autoplay : posterContainer.visible = true;
 			posterContainer.buttonMode = true;
 			posterContainer.addEventListener(MouseEvent.CLICK, clicPoster);
-		}
-		
-		private function posterLoaded(e:Event):void 
-		{
-			var intervalTimeOut:int = setTimeout(launchPoster, 100);
-			
-		}
-		
-		private function launchPoster():void 
-		{
-			resize();
-			TweenLite.to(poster, 0.5, { alpha:1 } );
+			//
+			if (autoload) {
+				createMenu();
+				createSrt();
+				loadVideo(videoUrl, autoload);
+			}
 		}
 		//
 		private function clicPoster(e:MouseEvent = null):void
@@ -317,6 +350,7 @@ package
 		 */
 		private function onMetaData(e:CustomEvent):void 
 		{
+			trace("onMetaData");
 			resize();
 			//trace(Utils.requestedFlashVarsGet)
 			if (srtUrl) {
@@ -332,11 +366,7 @@ package
 		 * Quand on toggle hi et low quality
 		 * @param	e
 		 */
-		private function onQualityChange(e:CustomEvent):void 
-		{
-			//if (srtField) {
-				//srtField.text = " ";
-			//}
+		private function onQualityChange(e:CustomEvent):void {
 			autoplay = video.playing;
 			if (e.currentPosition == 0) {
 				loadVideo(videoLowDefUrl);
@@ -362,6 +392,7 @@ package
 		
 		private function resize(e:*=null):void 
 		{
+			trace("resize");
 			if(menu){
 				menu.width = stage.stageWidth;
 				menu.y = stage.stageHeight - menu.height;
@@ -396,7 +427,6 @@ package
 				video.y = stage.stageHeight / 2 - video.height / 2;
 				video.x = stage.stageWidth / 2 - video.width / 2;
 			}				
-			//
 			//
 			if ( poster ) {
 				var maxWidthPoster:Number;
