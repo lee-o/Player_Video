@@ -234,7 +234,9 @@ package
 				video.time = 0;
 				menu.play( loop );
 			});
-			video.addEventListener(MouseEvent.CLICK, function clicVideo():void {menu.play(!video.playing);});
+			video.addEventListener(MouseEvent.CLICK, function clicVideo():void { menu.play(!video.playing); } );
+			video.doubleClickEnabled = true;
+			video.addEventListener(MouseEvent.DOUBLE_CLICK, toggleFullScreen);
 			//
 			menu.video = video;
 			menu.visible = true;
