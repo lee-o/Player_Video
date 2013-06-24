@@ -131,7 +131,7 @@ package
 			//on verifie que autoload est bien sur true au cas ou autoplay est true
 			if (autoplay) autoload = true;
 			
-			mouseTimer = new MouseTimer(3000, Utils.stage);
+			mouseTimer = new MouseTimer(800, Utils.stage);
 			mouseTimer.addEventListener(CustomEvent.ON_SLEEPING, hideMenu);
 			mouseTimer.addEventListener(CustomEvent.ON_MOVING, showMenu);
 			
