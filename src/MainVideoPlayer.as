@@ -236,7 +236,7 @@ package
 			});
 			video.addEventListener(MouseEvent.CLICK, function clicVideo():void { menu.play(!video.playing); } );
 			video.doubleClickEnabled = true;
-			video.addEventListener(MouseEvent.DOUBLE_CLICK, toggleFullScreen);
+			video.addEventListener(MouseEvent.DOUBLE_CLICK, dubbleClikFullscreen);
 			//
 			menu.video = video;
 			menu.visible = true;
@@ -250,6 +250,13 @@ package
 			//
 			video.addEventListener(CustomEvent.ON_PLAY_COMPLETE, showPoster);
 			video.addEventListener(CustomEvent.ON_META_DATA, onMetaData);
+		}
+		
+		private function dubbleClikFullscreen(e:MouseEvent = null):void
+		{
+			toggleFullScreen();
+			video.playing ? menu.play(false) : menu.play(true);
+			
 		}
 		/**
 		 * affiche le poster
