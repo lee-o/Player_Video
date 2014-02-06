@@ -42,6 +42,7 @@ package
 		//public var poster:EasyLoader;
 		public var poster:*;
 		public var srtUrl:String;
+		public var gaId:String;
 		public var autoplay:Boolean = false;
 		public var posterScaling:Boolean;
 		private var posterCrop:Boolean;
@@ -62,6 +63,7 @@ package
 		private var posterPlay:PictoPlay128;
 		private var conteneurImage:Loader;
 		private var conteneurImageRequest:URLRequest;
+		private var alreadyPlayed:Boolean = false;
 		
 		
 		public function MainVideoPlayer():void 
@@ -76,7 +78,7 @@ package
 			// entry point
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
-			ShicConfig.debug = false;
+			ShicConfig.debug = true;
 			EasyLoader.debug = false;
 			Utils.stage = stage;
 			StageUtils.TopLeftNoScale();
@@ -100,12 +102,13 @@ package
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "");
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "");
 			this.srtUrl = Utils.flashVarsGet("srtUrl", "");
+			this.gaId = Utils.flashVarsGet("gaId", "");
 			//LOCALE
-			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_HD.mp4");
-			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/photo/medias/videos/Lila_cayeux_LD.mp4");
-			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/photo/medias/photos/Lila_cayeux.jpg");
-			//this.posterUrl = Utils.flashVarsGet("posterUrl", "");
-			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");*/
+			/*this.videoUrl = Utils.flashVarsGet("videoUrl", "http://thinkadelik.fr/kids/medias/videos/Lila_cayeux_HD.mp4");
+			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/kids/medias/videos/Lila_cayeux_LD.mp4");
+			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/kids/medias/photos/Lila_cayeux.jpg");
+			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
+			this.gaId = Utils.flashVarsGet("gaId", "UA-11817273-5");*/
 			//PARAMS
 			this.loop = Utils.getBool(Utils.flashVarsGet("loop", "false"));
 			this.autoplay = Utils.getBool(Utils.flashVarsGet("autoplay", "false"));
@@ -347,11 +350,13 @@ package
 				menu.play(true);
 			}else {
 				autoload = true;
+				trace("autoload: " + autoload);
 				createMenu();
 				createSrt();
 				loadVideo(videoUrl, autoload);
 				menu.play(true);
 			}
+			
 		}
 		/**
 		 * invoqué quand les meta de la vidéo sont disponibles, entraine un resize et le chargement des sous titres
@@ -370,6 +375,16 @@ package
 				subtitles.addEventListener(CustomEvent.ON_CHANGE, setPositionSrt);	
 			}
 			//trace(Utils.requestedFlashVarsGet);
+			if (!alreadyPlayed) {
+				alreadyPlayed = true;
+				try {
+					if(ExternalInterface.available){
+						ExternalInterface.call( "gaPlayerAction" ,  "firstPlay"  );
+					}
+				}catch ( e : * ) {
+					// not embeddeded
+				}
+			}
 		}
 		/**
 		 * Quand on toggle hi et low quality
