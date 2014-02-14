@@ -108,7 +108,7 @@ package
 			this.videoLowDefUrl = Utils.flashVarsGet("videoLowDefUrl", "http://thinkadelik.fr/kids/medias/videos/Lila_cayeux_LD.mp4");
 			this.posterUrl = Utils.flashVarsGet("posterUrl", "http://thinkadelik.fr/kids/medias/photos/Lila_cayeux.jpg");
 			//this.srtUrl=Utils.flashVarsGet("srtUrl", "http://clement.de.shic.cc/the-drone-v2/xml/subtitles/srt2usf/media/the-drone/2010/11/sethtroxler.srt");
-			this.gaId = Utils.flashVarsGet("gaId", "UA-11817273-5");*/
+			//this.gaId = Utils.flashVarsGet("gaId", "UA-11817273-5");*/
 			//PARAMS
 			this.loop = Utils.getBool(Utils.flashVarsGet("loop", "false"));
 			this.autoplay = Utils.getBool(Utils.flashVarsGet("autoplay", "false"));
@@ -331,9 +331,10 @@ package
 		{
 			trace("poster loaded");
 			resize();
-			TweenMax.to(poster, 0.5, { autoAlpha:1 } );
+			
+			if(!autoplay) TweenMax.to(poster, 0.5, { autoAlpha:1 } );
 			//
-			autoload ? posterContainer.visible = autoplay : posterContainer.visible = true;
+			autoload ? posterContainer.visible = !autoplay : posterContainer.visible = true;
 			posterContainer.buttonMode = true;
 			posterContainer.addEventListener(MouseEvent.CLICK, clicPoster);
 			//
